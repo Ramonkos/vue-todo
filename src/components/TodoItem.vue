@@ -18,7 +18,17 @@ export default {
   props: ["todo"],
   methods: {
     markComplete() {
-      this.todo.completed = !this.todo.completed;
+      // this.todo.completed = !this.todo.completed;
+
+      // let data = localStorage.getItem("todos");
+      // const todosInStorage = JSON.parse(data);
+      // const index = todosInStorage.findIndex((todo) => todo.id === id);
+      console.log("hello");
+      // console.log(index);
+
+      // todosInStorage[index] = !todosInStorage[index].completed;
+      // const updatedTodos = [...todosInStorage];
+      // localStorage.setItem("todos", JSON.stringify(updatedTodos));
     },
   },
 };

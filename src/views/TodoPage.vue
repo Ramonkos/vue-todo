@@ -9,7 +9,7 @@
     />
     <ProgressBar v-bind:amountCompleted="amountCompleted" />
     <Todos
-      v-bind:todos="filtered"
+      v-bind:todos="filteredTodos"
       v-on:del-todo="deleteTodo"
       v-on:countCompleted="countCompleted"
     />
@@ -35,40 +35,62 @@ export default {
   data() {
     return {
       todos: [],
-      filtered: [],
-      initialTodos: [],
+      filteredTodos: [],
       amountCompleted: 0,
     };
   },
   mounted() {
-    this.filtered = this.todos;
+    let data = localStorage.getItem("todos");
+    if (data) {
+      this.filteredTodos = this.todos = JSON.parse(data);
+    }
   },
   methods: {
     deleteTodo(id) {
-      this.todos = this.todos.filter((todo) => todo.id !== id);
-      this.filtered = this.todos;
+      const data = localStorage.getItem("todos");
+      const todosInStorage = JSON.parse(data);
+      const filtered = todosInStorage.filter((todo) => todo.id !== id);
+      localStorage.setItem("todos", JSON.stringify(filtered));
+      this.todos = filtered;
+      this.filteredTodos = filtered;
       this.countCompleted();
     },
     addTodo(newTodo) {
-      this.todos = [...this.todos, newTodo];
-      this.filtered = this.todos;
+      let data = localStorage.getItem("todos");
+      if (data) {
+        const todosInStorage = JSON.parse(data);
+        const updatedTodos = [...todosInStorage, newTodo];
+        localStorage.setItem("todos", JSON.stringify(updatedTodos));
+        this.todos = updatedTodos;
+        console.log("in da if", this.todos);
+        this.filteredTodos = updatedTodos;
+      } else {
+        localStorage.setItem("todos", JSON.stringify([newTodo]));
+        this.todos = [newTodo];
+        this.filteredTodos = [newTodo];
+        console.log("in da else", this.todos);
+      }
       this.countCompleted();
     },
     filterActive() {
-      this.filtered = this.todos.filter((todo) => todo.completed === false);
+      this.filteredTodos = this.todos.filter(
+        (todo) => todo.completed === false
+      );
     },
     filterCompleted() {
-      this.filtered = this.todos.filter((todo) => todo.completed === true);
+      this.filteredTodos = this.todos.filter((todo) => todo.completed === true);
     },
     filterReset() {
-      this.filtered = this.todos;
+      this.filteredTodos = this.todos;
     },
     countCompleted() {
       const amountTodos = this.todos.length;
       let count = 0;
+      console.log("this.todos", this.todos);
       for (let todo of this.todos) {
         if (todo.completed) count++;
       }
+      console.log("count", count);
       if (amountTodos) {
         this.amountCompleted = (count / amountTodos) * 100;
       } else {
