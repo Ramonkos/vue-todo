@@ -9,7 +9,7 @@
     />
     <ProgressBar v-bind:amountCompleted="amountCompleted" />
     <Todos
-      v-bind:todos="todos"
+      v-bind:todos="filtered"
       v-on:del-todo="deleteTodo"
       v-on:countCompleted="countCompleted"
     />
@@ -34,51 +34,34 @@ export default {
   },
   data() {
     return {
-      todos: [
-        {
-          id: 1,
-          title: "Shopping",
-          completed: false,
-        },
-        {
-          id: 2,
-          title: "Gym",
-          completed: false,
-        },
-        {
-          id: 3,
-          title: "Loundry",
-          completed: false,
-        },
-      ],
+      todos: [],
+      filtered: [],
       initialTodos: [],
       amountCompleted: 0,
     };
   },
   mounted() {
-    this.initialTodos = this.todos;
+    this.filtered = this.todos;
   },
   methods: {
     deleteTodo(id) {
       this.todos = this.todos.filter((todo) => todo.id !== id);
-      this.initialTodos = this.todos;
+      this.filtered = this.todos;
       this.countCompleted();
     },
     addTodo(newTodo) {
       this.todos = [...this.todos, newTodo];
-      this.initialTodos = this.todos;
+      this.filtered = this.todos;
       this.countCompleted();
     },
     filterActive() {
-      this.todos = this.initialTodos;
-      this.todos = this.todos.filter((todo) => todo.completed === false);
+      this.filtered = this.todos.filter((todo) => todo.completed === false);
     },
     filterCompleted() {
-      this.todos = this.initialTodos;
-      this.todos = this.todos.filter((todo) => todo.completed === true);
+      this.filtered = this.todos.filter((todo) => todo.completed === true);
     },
     filterReset() {
-      this.todos = this.initialTodos;
+      this.filtered = this.todos;
     },
     countCompleted() {
       const amountTodos = this.todos.length;
