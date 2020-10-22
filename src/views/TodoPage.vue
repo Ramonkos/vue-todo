@@ -62,13 +62,11 @@ export default {
         const updatedTodos = [...todosInStorage, newTodo];
         localStorage.setItem("todos", JSON.stringify(updatedTodos));
         this.todos = updatedTodos;
-        console.log("in da if", this.todos);
         this.filteredTodos = updatedTodos;
       } else {
         localStorage.setItem("todos", JSON.stringify([newTodo]));
         this.todos = [newTodo];
         this.filteredTodos = [newTodo];
-        console.log("in da else", this.todos);
       }
       this.countCompleted();
     },
@@ -86,11 +84,9 @@ export default {
     countCompleted() {
       const amountTodos = this.todos.length;
       let count = 0;
-      console.log("this.todos", this.todos);
       for (let todo of this.todos) {
         if (todo.completed) count++;
       }
-      console.log("count", count);
       if (amountTodos) {
         this.amountCompleted = (count / amountTodos) * 100;
       } else {
