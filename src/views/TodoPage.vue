@@ -7,7 +7,12 @@
       v-on:filter-completed="filterCompleted"
       v-on:filter-reset="filterReset"
     />
-    <Todos v-bind:todos="todos" v-on:del-todo="deleteTodo" />
+    <ProgressBar v-bind:amountCompleted="amountCompleted" />
+    <Todos
+      v-bind:todos="todos"
+      v-on:del-todo="deleteTodo"
+      v-on:countCompleted="countCompleted"
+    />
   </div>
 </template>
 
@@ -16,7 +21,7 @@ import Header from "../components/Header";
 import Todos from "../components/Todos";
 import AddTodo from "../components/AddTodo";
 import FilterButtons from "../components/FilterButtons";
-// import axios from 'axios'
+import ProgressBar from "../components/ProgressBar";
 
 export default {
   name: "TodosPage",
@@ -25,6 +30,7 @@ export default {
     Todos,
     AddTodo,
     FilterButtons,
+    ProgressBar,
   },
   data() {
     return {
@@ -46,16 +52,22 @@ export default {
         },
       ],
       initialTodos: [],
+      amountCompleted: 0,
     };
+  },
+  mounted() {
+    this.initialTodos = this.todos;
   },
   methods: {
     deleteTodo(id) {
       this.todos = this.todos.filter((todo) => todo.id !== id);
       this.initialTodos = this.todos;
+      this.countCompleted();
     },
     addTodo(newTodo) {
       this.todos = [...this.todos, newTodo];
       this.initialTodos = this.todos;
+      this.countCompleted();
     },
     filterActive() {
       this.todos = this.initialTodos;
@@ -68,9 +80,17 @@ export default {
     filterReset() {
       this.todos = this.initialTodos;
     },
-    mounted() {
-      console.log("mounted");
-      // this.initialTodos = this.todos;
+    countCompleted() {
+      const amountTodos = this.todos.length;
+      let count = 0;
+      for (let todo of this.todos) {
+        if (todo.completed) count++;
+      }
+      if (amountTodos) {
+        this.amountCompleted = (count / amountTodos) * 100;
+      } else {
+        this.amountCompleted = 100;
+      }
     },
   },
 };
