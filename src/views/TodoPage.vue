@@ -9,7 +9,7 @@
     />
     <ProgressBar v-bind:amountCompleted="amountCompleted" />
     <Todos
-      v-bind:todos="todos"
+      v-bind:todos="filteredTodos"
       v-on:del-todo="deleteTodo"
       v-on:countCompleted="countCompleted"
     />
@@ -34,51 +34,52 @@ export default {
   },
   data() {
     return {
-      todos: [
-        {
-          id: 1,
-          title: "Shopping",
-          completed: false,
-        },
-        {
-          id: 2,
-          title: "Gym",
-          completed: false,
-        },
-        {
-          id: 3,
-          title: "Loundry",
-          completed: false,
-        },
-      ],
-      initialTodos: [],
+      todos: [],
+      filteredTodos: [],
       amountCompleted: 0,
     };
   },
   mounted() {
-    this.initialTodos = this.todos;
+    let data = localStorage.getItem("todos");
+    if (data) {
+      this.filteredTodos = this.todos = JSON.parse(data);
+    }
   },
   methods: {
     deleteTodo(id) {
-      this.todos = this.todos.filter((todo) => todo.id !== id);
-      this.initialTodos = this.todos;
+      const data = localStorage.getItem("todos");
+      const todosInStorage = JSON.parse(data);
+      const filtered = todosInStorage.filter((todo) => todo.id !== id);
+      localStorage.setItem("todos", JSON.stringify(filtered));
+      this.todos = filtered;
+      this.filteredTodos = filtered;
       this.countCompleted();
     },
     addTodo(newTodo) {
-      this.todos = [...this.todos, newTodo];
-      this.initialTodos = this.todos;
+      let data = localStorage.getItem("todos");
+      if (data) {
+        const todosInStorage = JSON.parse(data);
+        const updatedTodos = [...todosInStorage, newTodo];
+        localStorage.setItem("todos", JSON.stringify(updatedTodos));
+        this.todos = updatedTodos;
+        this.filteredTodos = updatedTodos;
+      } else {
+        localStorage.setItem("todos", JSON.stringify([newTodo]));
+        this.todos = [newTodo];
+        this.filteredTodos = [newTodo];
+      }
       this.countCompleted();
     },
     filterActive() {
-      this.todos = this.initialTodos;
-      this.todos = this.todos.filter((todo) => todo.completed === false);
+      this.filteredTodos = this.todos.filter(
+        (todo) => todo.completed === false
+      );
     },
     filterCompleted() {
-      this.todos = this.initialTodos;
-      this.todos = this.todos.filter((todo) => todo.completed === true);
+      this.filteredTodos = this.todos.filter((todo) => todo.completed === true);
     },
     filterReset() {
-      this.todos = this.initialTodos;
+      this.filteredTodos = this.todos;
     },
     countCompleted() {
       const amountTodos = this.todos.length;
