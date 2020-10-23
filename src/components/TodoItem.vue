@@ -19,14 +19,15 @@ export default {
   methods: {
     markComplete() {
       this.todo.completed = !this.todo.completed;
-      // let data = localStorage.getItem("todos");
-      // const todosInStorage = JSON.parse(data);
-      // const index = todosInStorage.findIndex((todo) => todo.id === this.props.todo.id);
-      // console.log(this.props.todo.id);
-      // console.log(index);
-      // todosInStorage[index] = !todosInStorage[index].completed;
-      // const updatedTodos = [...todosInStorage];
-      // localStorage.setItem("todos", JSON.stringify(updatedTodos));
+      let data = localStorage.getItem("todos");
+      const todosInStorage = JSON.parse(data);
+      const index = todosInStorage.findIndex(
+        (todo) => todo.id === this.todo.id
+      );
+      const targetTodo = todosInStorage[index];
+      targetTodo.completed = !targetTodo.completed;
+      todosInStorage[index] = targetTodo;
+      localStorage.setItem("todos", JSON.stringify(todosInStorage));
     },
   },
 };
